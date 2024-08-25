@@ -6,7 +6,12 @@ const config: Config = {
   coverageDirectory: "coverage",
   coverageProvider: "v8",
   preset: "ts-jest",
-  collectCoverageFrom: ["src/**/*.ts"],
+  collectCoverageFrom: [
+    "src/**/*.ts",
+    "!src/main/**",
+    "!src/domain/**",
+    "!src/**/protocols/**",
+  ],
 };
 
 export default config;

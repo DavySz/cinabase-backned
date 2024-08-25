@@ -17,6 +17,11 @@ export const ok = (data: any): HttpResponse => ({
   body: data,
 });
 
+export const created = (data: any): HttpResponse => ({
+  statusCode: 201,
+  body: data,
+});
+
 export const notFound = (id: string): HttpResponse => ({
   statusCode: 404,
   body: new NotFoundError(id),
