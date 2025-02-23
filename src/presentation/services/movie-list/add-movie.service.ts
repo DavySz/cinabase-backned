@@ -7,16 +7,16 @@ import {
   badRequest,
   serverError,
 } from "../../helpers/http-helper";
-import { Controller } from "../../protocols/controller.protocol";
 import { HttpRequest, HttpResponse } from "../../protocols/http.protocol";
+import { Service } from "../../protocols/service.protocol";
 
-export class AddMovieController implements Controller {
+export class AddMovieService implements Service {
   constructor(
     private readonly addMovie: AddMovieUsecase,
     private readonly findMovieById: FindMovieByIdUsecase
   ) {}
 
-  async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
+  async execute(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const { id } = httpRequest.params;
 

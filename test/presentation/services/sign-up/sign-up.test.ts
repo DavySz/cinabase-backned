@@ -3,7 +3,6 @@ import {
   AddAccount,
   AddAccountModel,
 } from "../../../../src/domain/usecases/add-account.usecase";
-import { SignUpController } from "../../../../src/presentation/controllers/sign-up/sign-up.controller";
 import { InvalidParamError } from "../../../../src/presentation/errors/invalid-param-error";
 import { MissingParamError } from "../../../../src/presentation/errors/missing-param-error";
 import {
@@ -14,12 +13,13 @@ import { Validator } from "../../../../src/presentation/protocols/validator.prot
 import { EmailValidator } from "../../../../src/presentation/utils/email-validator";
 import { Encrypter } from "../../../../src/data/protocols/encrypter.protocol";
 import { makeBcryptAdapter } from "../../../mocks/encrypter/encrypter";
+import { SignUpService } from "../../../../src/presentation/services/sign-up/sign-up.service";
 
 interface SutModel {
   emailValidator: EmailValidator;
   bcryptAdapter: Encrypter;
   addAccount: AddAccount;
-  sut: SignUpController;
+  sut: SignUpService;
 }
 
 const makeAccountModel = (): AccountModel => ({
@@ -53,7 +53,7 @@ const makeSut = (): SutModel => {
   const addAccount = makeAddAccount();
   const bcryptAdapter = makeBcryptAdapter();
   const emailValidator = makeEmailValidator();
-  const sut = new SignUpController(addAccount, emailValidator, bcryptAdapter);
+  const sut = new SignUpService(addAccount, emailValidator, bcryptAdapter);
 
   return {
     emailValidator,
@@ -64,13 +64,20 @@ const makeSut = (): SutModel => {
 };
 
 describe("SignUpController", () => {
+  test("should return 400 if no field is provided", async () => {
+    const { sut } = makeSut();
+    const emptyParams = null;
+    const response = await sut.execute({ body: emptyParams });
+    expect(response).toEqual(badRequest(new MissingParamError("name")));
+  });
+
   test("should return 400 if no name is provided", async () => {
     const { sut } = makeSut();
     const paramsWithoutName = {
       password: "any-password",
       email: "any-email",
     };
-    const response = await sut.handle({ body: paramsWithoutName });
+    const response = await sut.execute({ body: paramsWithoutName });
     expect(response).toEqual(badRequest(new MissingParamError("name")));
   });
 
@@ -80,7 +87,7 @@ describe("SignUpController", () => {
       password: "any-password",
       name: "any-name",
     };
-    const response = await sut.handle({ body: paramsWithoutEmail });
+    const response = await sut.execute({ body: paramsWithoutEmail });
     expect(response).toEqual(badRequest(new MissingParamError("email")));
   });
 
@@ -90,7 +97,7 @@ describe("SignUpController", () => {
       email: "any-email",
       name: "any-name",
     };
-    const response = await sut.handle({ body: paramsWithoutPassword });
+    const response = await sut.execute({ body: paramsWithoutPassword });
     expect(response).toEqual(badRequest(new MissingParamError("password")));
   });
 
@@ -102,7 +109,7 @@ describe("SignUpController", () => {
       email: "any-email",
       name: "any-name",
     };
-    await sut.handle({ body: paramsWithoutPassword });
+    await sut.execute({ body: paramsWithoutPassword });
     expect(isValidSpy).toHaveBeenCalledWith("any-email");
   });
 
@@ -114,7 +121,7 @@ describe("SignUpController", () => {
       email: "any-email",
       name: "any-name",
     };
-    const response = await sut.handle({ body: paramsWithoutPassword });
+    const response = await sut.execute({ body: paramsWithoutPassword });
     expect(response).toEqual(badRequest(new InvalidParamError("email")));
   });
 
@@ -126,7 +133,7 @@ describe("SignUpController", () => {
       email: "any-email",
       password: "any-password",
     };
-    await sut.handle({ body: params });
+    await sut.execute({ body: params });
     expect(encryptSpy).toHaveBeenCalledWith("any-password");
   });
 
@@ -142,7 +149,7 @@ describe("SignUpController", () => {
       password: "any-password",
     };
 
-    const response = await sut.handle({ body: params });
+    const response = await sut.execute({ body: params });
     expect(response).toEqual(serverError(new Error()));
   });
 
@@ -154,7 +161,7 @@ describe("SignUpController", () => {
       email: "any-email",
       password: "any-password",
     };
-    await sut.handle({ body: params });
+    await sut.execute({ body: params });
     expect(addSpy).toHaveBeenCalledWith({
       name: "any-name",
       email: "any-email",
@@ -172,7 +179,7 @@ describe("SignUpController", () => {
       email: "any-email",
       password: "any-password",
     };
-    const response = await sut.handle({ body: params });
+    const response = await sut.execute({ body: params });
     expect(response).toEqual(serverError(new Error()));
   });
 
@@ -183,7 +190,7 @@ describe("SignUpController", () => {
       email: "any-email",
       password: "any-password",
     };
-    const response = await sut.handle({ body: params });
+    const response = await sut.execute({ body: params });
     expect(response.statusCode).toBe(201);
     expect(response.body).toEqual(makeAccountModel());
   });

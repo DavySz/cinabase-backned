@@ -1,7 +1,6 @@
 import { Encrypter } from "../../../../src/data/protocols/encrypter.protocol";
 import { AccountModel } from "../../../../src/domain/models/account.model";
 import { FindByEmail } from "../../../../src/domain/usecases/find-by-email.usecase";
-import { SignInController } from "../../../../src/presentation/controllers/sign-in/sign-in.controller";
 import { InvalidParamError } from "../../../../src/presentation/errors/invalid-param-error";
 import { MissingParamError } from "../../../../src/presentation/errors/missing-param-error";
 import {
@@ -9,12 +8,13 @@ import {
   ok,
   serverError,
 } from "../../../../src/presentation/helpers/http-helper";
+import { SignInService } from "../../../../src/presentation/services/sign-in/sign-in.service";
 import { makeBcryptAdapter } from "../../../mocks/encrypter/encrypter";
 
 interface SutModel {
   bcryptAdapter: Encrypter;
   findByEmail: FindByEmail;
-  sut: SignInController;
+  sut: SignInService;
 }
 
 class FindByEmailStub implements FindByEmail {
@@ -31,7 +31,7 @@ class FindByEmailStub implements FindByEmail {
 const makeSut = (): SutModel => {
   const findByEmail = new FindByEmailStub();
   const bcryptAdapter = makeBcryptAdapter();
-  const sut = new SignInController(findByEmail, bcryptAdapter);
+  const sut = new SignInService(findByEmail, bcryptAdapter);
 
   return {
     bcryptAdapter,
@@ -41,13 +41,20 @@ const makeSut = (): SutModel => {
 };
 
 describe("SignInController", () => {
+  test("should return 400 if no field is provided", async () => {
+    const { sut } = makeSut();
+    const emptyParams = null;
+    const response = await sut.execute({ body: emptyParams });
+    expect(response).toEqual(badRequest(new MissingParamError("email")));
+  });
+
   it("should return 400 if no email is provided", async () => {
     const { sut } = makeSut();
     const bodyWithoutEmail = {
       password: "any-password",
     };
 
-    const response = await sut.handle({ body: bodyWithoutEmail });
+    const response = await sut.execute({ body: bodyWithoutEmail });
     expect(response).toEqual(badRequest(new MissingParamError("email")));
   });
 
@@ -57,7 +64,7 @@ describe("SignInController", () => {
       email: "any-email",
     };
 
-    const response = await sut.handle({ body: bodyWithoutPassword });
+    const response = await sut.execute({ body: bodyWithoutPassword });
     expect(response).toEqual(badRequest(new MissingParamError("password")));
   });
 
@@ -73,7 +80,7 @@ describe("SignInController", () => {
       password: "any-password",
     };
 
-    const response = await sut.handle({ body });
+    const response = await sut.execute({ body });
 
     expect(response).toEqual(
       badRequest(new InvalidParamError("email or password"))
@@ -89,7 +96,7 @@ describe("SignInController", () => {
       password: "invalid-password",
     };
 
-    const response = await sut.handle({ body });
+    const response = await sut.execute({ body });
 
     expect(response).toEqual(
       badRequest(new InvalidParamError("email or password"))
@@ -105,7 +112,7 @@ describe("SignInController", () => {
       password: "any-password",
     };
 
-    const response = await sut.handle({ body });
+    const response = await sut.execute({ body });
     expect(response).toEqual(serverError(new Error()));
   });
 
@@ -118,7 +125,7 @@ describe("SignInController", () => {
       password: "any-password",
     };
 
-    const response = await sut.handle({ body });
+    const response = await sut.execute({ body });
     expect(response).toEqual(serverError(new Error()));
   });
 
@@ -130,7 +137,7 @@ describe("SignInController", () => {
       email: "any-email",
     };
 
-    const response = await sut.handle({ body });
+    const response = await sut.execute({ body });
 
     expect(response).toEqual(
       ok({

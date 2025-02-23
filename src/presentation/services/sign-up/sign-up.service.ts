@@ -6,23 +6,23 @@ import {
 import { InvalidParamError } from "../../errors/invalid-param-error";
 import { MissingParamError } from "../../errors/missing-param-error";
 import { badRequest, created, serverError } from "../../helpers/http-helper";
-import { Controller } from "../../protocols/controller.protocol";
 import { HttpRequest, HttpResponse } from "../../protocols/http.protocol";
+import { Service } from "../../protocols/service.protocol";
 import { EmailValidator } from "../../utils/email-validator";
 
-export class SignUpController implements Controller {
+export class SignUpService implements Service {
   constructor(
     private readonly addAccount: AddAccount,
     private readonly emailValidator: EmailValidator,
     private readonly encrypter: Encrypter
   ) {}
 
-  async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
+  async execute(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const requiredFields = ["name", "email", "password"];
 
       for (const field of requiredFields) {
-        if (!httpRequest.body[field]) {
+        if (!httpRequest.body?.[field]) {
           return badRequest(new MissingParamError(field));
         }
       }

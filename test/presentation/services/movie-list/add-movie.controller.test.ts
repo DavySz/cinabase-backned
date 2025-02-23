@@ -1,7 +1,6 @@
 import { MovieModel } from "../../../../src/domain/models/movie.model";
 import { AddMovieUsecase } from "../../../../src/domain/usecases/add-movie.usecase";
 import { FindMovieByIdUsecase } from "../../../../src/domain/usecases/find-movie-by-id.usecase";
-import { AddMovieController } from "../../../../src/presentation/controllers/movie-list/add-movie.controller";
 import { MissingParamError } from "../../../../src/presentation/errors/missing-param-error";
 import {
   badRequest,
@@ -10,11 +9,12 @@ import {
   serverError,
 } from "../../../../src/presentation/helpers/http-helper";
 import { HttpRequest } from "../../../../src/presentation/protocols/http.protocol";
+import { AddMovieService } from "../../../../src/presentation/services/movie-list/add-movie.service";
 
 interface SutModel {
   findMovieById: FindMovieByIdUsecase;
   addMovie: AddMovieUsecase;
-  sut: AddMovieController;
+  sut: AddMovieService;
 }
 
 export const makeMovieModel = (): MovieModel => ({
@@ -93,7 +93,7 @@ const makeFindMovieByIdStub = (): FindMovieByIdUsecase => {
 const makeSut = (): SutModel => {
   const addMovie = makeAddMovieStub();
   const findMovieById = makeFindMovieByIdStub();
-  const sut = new AddMovieController(addMovie, findMovieById);
+  const sut = new AddMovieService(addMovie, findMovieById);
   return {
     findMovieById,
     addMovie,
@@ -107,13 +107,13 @@ describe("AddMovieController", () => {
   test("should call findMovieById.execute with correct param", async () => {
     const { sut, findMovieById } = makeSut();
     const executeSpy = jest.spyOn(findMovieById, "execute");
-    await sut.handle(makeHttpRequest());
+    await sut.execute(makeHttpRequest());
     expect(executeSpy).toHaveBeenCalledWith("123");
   });
 
   test("should return 400 if no id is provided", async () => {
     const { sut } = makeSut();
-    const response = await sut.handle({ params: {} });
+    const response = await sut.execute({ params: {} });
     expect(response).toEqual(badRequest(new MissingParamError("id")));
   });
 
@@ -123,27 +123,27 @@ describe("AddMovieController", () => {
       .spyOn(findMovieById, "execute")
       .mockResolvedValueOnce({} as MovieModel);
 
-    const response = await sut.handle(makeHttpRequest());
+    const response = await sut.execute(makeHttpRequest());
     expect(response).toEqual(notFound("123"));
   });
 
   test("should return 500 if findMovieById throws", async () => {
     const { sut, findMovieById } = makeSut();
     jest.spyOn(findMovieById, "execute").mockRejectedValueOnce(new Error());
-    const response = await sut.handle(makeHttpRequest());
+    const response = await sut.execute(makeHttpRequest());
     expect(response).toEqual(serverError(new Error()));
   });
 
   test("should return 500 if addMovie throws", async () => {
     const { sut, addMovie } = makeSut();
     jest.spyOn(addMovie, "execute").mockRejectedValueOnce(new Error());
-    const response = await sut.handle(makeHttpRequest());
+    const response = await sut.execute(makeHttpRequest());
     expect(response).toEqual(serverError(new Error()));
   });
 
   test("should return 200 on success", async () => {
     const { sut } = makeSut();
-    const response = await sut.handle(makeHttpRequest());
+    const response = await sut.execute(makeHttpRequest());
     expect(response).toEqual(ok(makeMovieModel()));
   });
 });
