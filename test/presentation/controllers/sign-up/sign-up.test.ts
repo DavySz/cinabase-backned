@@ -13,6 +13,7 @@ import {
 import { Validator } from "../../../../src/presentation/protocols/validator.protocol";
 import { EmailValidator } from "../../../../src/presentation/utils/email-validator";
 import { Encrypter } from "../../../../src/data/protocols/encrypter.protocol";
+import { makeBcryptAdapter } from "../../../mocks/encrypter/encrypter";
 
 interface SutModel {
   emailValidator: EmailValidator;
@@ -46,16 +47,6 @@ const makeAddAccount = (): AddAccount => {
   }
 
   return new AddAccountStub();
-};
-
-const makeBcryptAdapter = (): Encrypter => {
-  class BcryptAdapterStub implements Encrypter {
-    async encrypt(_: string): Promise<string> {
-      return "hashed-password";
-    }
-  }
-
-  return new BcryptAdapterStub();
 };
 
 const makeSut = (): SutModel => {
