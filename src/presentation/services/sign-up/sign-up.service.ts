@@ -1,8 +1,6 @@
-import { Encrypter } from "../../../data/protocols/encrypter.protocol";
-import {
-  AddAccount,
-  AddAccountModel,
-} from "../../../domain/usecases/add-account.usecase";
+import { AddAccountRepository } from "../../../domain/protocols/add-account.protocol";
+import { Encrypter } from "../../../domain/protocols/encrypter.protocol";
+import { AddAccountModel } from "../../../domain/usecases/add-account.usecase";
 import { InvalidParamError } from "../../errors/invalid-param-error";
 import { MissingParamError } from "../../errors/missing-param-error";
 import { badRequest, created, serverError } from "../../helpers/http-helper";
@@ -12,7 +10,7 @@ import { EmailValidator } from "../../utils/email-validator";
 
 export class SignUpService implements Service {
   constructor(
-    private readonly addAccount: AddAccount,
+    private readonly addAccount: AddAccountRepository,
     private readonly emailValidator: EmailValidator,
     private readonly encrypter: Encrypter
   ) {}
@@ -43,7 +41,7 @@ export class SignUpService implements Service {
         name,
       };
 
-      const response = await this.addAccount.execute(account);
+      const response = await this.addAccount.add(account);
       return created(response);
     } catch (error: unknown) {
       return serverError(error as Error);

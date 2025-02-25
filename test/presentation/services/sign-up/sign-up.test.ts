@@ -1,8 +1,5 @@
 import { AccountModel } from "../../../../src/domain/models/account.model";
-import {
-  AddAccount,
-  AddAccountModel,
-} from "../../../../src/domain/usecases/add-account.usecase";
+import { AddAccountModel } from "../../../../src/domain/usecases/add-account.usecase";
 import { InvalidParamError } from "../../../../src/presentation/errors/invalid-param-error";
 import { MissingParamError } from "../../../../src/presentation/errors/missing-param-error";
 import {
@@ -11,14 +8,15 @@ import {
 } from "../../../../src/presentation/helpers/http-helper";
 import { Validator } from "../../../../src/presentation/protocols/validator.protocol";
 import { EmailValidator } from "../../../../src/presentation/utils/email-validator";
-import { Encrypter } from "../../../../src/data/protocols/encrypter.protocol";
 import { makeBcryptAdapter } from "../../../mocks/encrypter/encrypter";
 import { SignUpService } from "../../../../src/presentation/services/sign-up/sign-up.service";
+import { AddAccountRepository } from "../../../../src/domain/protocols/add-account.protocol";
+import { Encrypter } from "../../../../src/domain/protocols/encrypter.protocol";
 
 interface SutModel {
   emailValidator: EmailValidator;
   bcryptAdapter: Encrypter;
-  addAccount: AddAccount;
+  addAccount: AddAccountRepository;
   sut: SignUpService;
 }
 
@@ -39,14 +37,14 @@ const makeEmailValidator = (): EmailValidator => {
   return new EmailValidatorStub();
 };
 
-const makeAddAccount = (): AddAccount => {
-  class AddAccountStub implements AddAccount {
-    execute(_: AddAccountModel): Promise<AccountModel> {
+const makeAddAccount = (): AddAccountRepository => {
+  class AccountRepositoryStub implements AddAccountRepository {
+    add(_: AddAccountModel): Promise<AccountModel> {
       return Promise.resolve(makeAccountModel());
     }
   }
 
-  return new AddAccountStub();
+  return new AccountRepositoryStub();
 };
 
 const makeSut = (): SutModel => {
@@ -155,7 +153,7 @@ describe("SignUpController", () => {
 
   test("should call AddAccount with correct values", async () => {
     const { sut, addAccount } = makeSut();
-    const addSpy = jest.spyOn(addAccount, "execute");
+    const addSpy = jest.spyOn(addAccount, "add");
     const params = {
       name: "any-name",
       email: "any-email",
@@ -172,7 +170,7 @@ describe("SignUpController", () => {
   test("should SignUpController throws an error 500 if AddAccount throws", async () => {
     const { sut, addAccount } = makeSut();
     jest
-      .spyOn(addAccount, "execute")
+      .spyOn(addAccount, "add")
       .mockReturnValueOnce(Promise.reject(new Error()));
     const params = {
       name: "any-name",

@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { Encrypter } from "../../data/protocols/encrypter.protocol";
+import { Encrypter } from "../../domain/protocols/encrypter.protocol";
 
 export class BcryptAdapter implements Encrypter {
   async encrypt(value: string): Promise<string> {

@@ -1,5 +1,5 @@
-import { Encrypter } from "../../../data/protocols/encrypter.protocol";
 import { AccountModel } from "../../../domain/models/account.model";
+import { Encrypter } from "../../../domain/protocols/encrypter.protocol";
 import { FindByEmail } from "../../../domain/usecases/find-by-email.usecase";
 import { InvalidParamError } from "../../errors/invalid-param-error";
 import { MissingParamError } from "../../errors/missing-param-error";

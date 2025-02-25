@@ -1,4 +1,4 @@
-import { Encrypter } from "../../../src/data/protocols/encrypter.protocol";
+import { Encrypter } from "../../../src/domain/protocols/encrypter.protocol";
 
 export const makeBcryptAdapter = (): Encrypter => {
   class BcryptAdapterStub implements Encrypter {
