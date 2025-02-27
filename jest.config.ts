@@ -12,6 +12,7 @@ const config: Config = {
     "!src/domain/**",
     "!src/**/protocols/**",
     "!src/**/schemas/**",
+    "!src/types/**",
   ],
   moduleNameMapper: {
     "^@domain/(.*)$": "<rootDir>/src/domain/$1",
