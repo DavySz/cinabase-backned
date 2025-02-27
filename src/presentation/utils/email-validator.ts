@@ -1,4 +1,4 @@
-import { Validator } from "../protocols/validator.protocol";
+import { Validator } from "@presentation/protocols/validator.protocol";
 
 export class EmailValidator implements Validator {
   isValid(email: string): boolean {

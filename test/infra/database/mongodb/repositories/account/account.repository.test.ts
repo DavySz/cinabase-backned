@@ -1,24 +1,21 @@
-import { AddAccountDTO } from "../../../../../../src/domain/dtos/add-account.dto";
-import { AccountRepository } from "../../../../../../src/infra/database/mongodb/repositories/account/account.repository";
-import { User } from "../../../../../../src/infra/database/mongodb/schemas/user.schema";
+import { AddAccountDTO } from "@domain/dtos/add-account.dto";
+import { AccountRepository } from "@infra/database/mongodb/repositories/account/account.repository";
+import { User } from "@infra/database/mongodb/schemas/user.schema";
 
-jest.mock(
-  "../../../../../../src/infra/database/mongodb/schemas/user.schema",
-  () => {
-    return {
-      User: {
-        create: jest.fn(() =>
-          Promise.resolve({
-            _id: { toHexString: () => "any-id" },
-            password: "hashed-password",
-            email: "any-email",
-            name: "any-name",
-          })
-        ),
-      },
-    };
-  }
-);
+jest.mock("@infra/database/mongodb/schemas/user.schema", () => {
+  return {
+    User: {
+      create: jest.fn(() =>
+        Promise.resolve({
+          _id: { toHexString: () => "any-id" },
+          password: "hashed-password",
+          email: "any-email",
+          name: "any-name",
+        })
+      ),
+    },
+  };
+});
 
 const addAccountModelDTO: AddAccountDTO = {
   password: "any-password",

@@ -1,4 +1,4 @@
-import { MovieModel } from "../models/movie.model";
+import { MovieModel } from "@domain/models/movie.model";
 
 export interface AddMovieUsecase {
   execute: (movie: MovieModel) => Promise<MovieModel>;

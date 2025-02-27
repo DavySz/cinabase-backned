@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 
-import { makeSignUpControllerFactory } from "./factories/controllers/sign-up/sign-up.factory";
+import { makeSignUpControllerFactory } from "@main/factories/controllers/sign-up/sign-up.factory";
 
 const app = express();
 app.use(express.json());

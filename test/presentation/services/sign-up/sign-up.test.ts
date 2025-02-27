@@ -1,17 +1,13 @@
-import { AccountModel } from "../../../../src/domain/models/account.model";
-import { AddAccountModel } from "../../../../src/domain/usecases/add-account.usecase";
-import { InvalidParamError } from "../../../../src/presentation/errors/invalid-param-error";
-import { MissingParamError } from "../../../../src/presentation/errors/missing-param-error";
-import {
-  badRequest,
-  serverError,
-} from "../../../../src/presentation/helpers/http-helper";
-import { Validator } from "../../../../src/presentation/protocols/validator.protocol";
-import { EmailValidator } from "../../../../src/presentation/utils/email-validator";
-import { makeBcryptAdapter } from "../../../mocks/encrypter/encrypter";
-import { SignUpService } from "../../../../src/presentation/services/sign-up/sign-up.service";
-import { AddAccountRepository } from "../../../../src/domain/protocols/add-account.protocol";
-import { Encrypter } from "../../../../src/domain/protocols/encrypter.protocol";
+import { AccountModel } from "@domain/models/account.model";
+import { AddAccountRepository } from "@domain/protocols/add-account.protocol";
+import { Encrypter } from "@domain/protocols/encrypter.protocol";
+import { AddAccountModel } from "@domain/usecases/add-account.usecase";
+import { InvalidParamError, MissingParamError } from "@presentation/errors";
+import { badRequest, serverError } from "@presentation/helpers/http-helper";
+import { Validator } from "@presentation/protocols/validator.protocol";
+import { SignUpService } from "@presentation/services/sign-up/sign-up.service";
+import { EmailValidator } from "@presentation/utils/email-validator";
+import { makeBcryptAdapter } from "@test/mocks/encrypter/encrypter";
 
 interface SutModel {
   emailValidator: EmailValidator;

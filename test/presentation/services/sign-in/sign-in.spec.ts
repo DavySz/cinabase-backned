@@ -1,15 +1,10 @@
-import { AccountModel } from "../../../../src/domain/models/account.model";
-import { Encrypter } from "../../../../src/domain/protocols/encrypter.protocol";
-import { FindByEmail } from "../../../../src/domain/usecases/find-by-email.usecase";
-import { InvalidParamError } from "../../../../src/presentation/errors/invalid-param-error";
-import { MissingParamError } from "../../../../src/presentation/errors/missing-param-error";
-import {
-  badRequest,
-  ok,
-  serverError,
-} from "../../../../src/presentation/helpers/http-helper";
-import { SignInService } from "../../../../src/presentation/services/sign-in/sign-in.service";
-import { makeBcryptAdapter } from "../../../mocks/encrypter/encrypter";
+import { AccountModel } from "@domain/models/account.model";
+import { Encrypter } from "@domain/protocols/encrypter.protocol";
+import { FindByEmail } from "@domain/usecases/find-by-email.usecase";
+import { InvalidParamError, MissingParamError } from "@presentation/errors";
+import { badRequest, ok, serverError } from "@presentation/helpers/http-helper";
+import { SignInService } from "@presentation/services/sign-in/sign-in.service";
+import { makeBcryptAdapter } from "@test/mocks/encrypter/encrypter";
 
 interface SutModel {
   bcryptAdapter: Encrypter;

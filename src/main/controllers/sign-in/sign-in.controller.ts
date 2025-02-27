@@ -1,7 +1,7 @@
+import { Controller } from "@main/protocols/controller.protocol";
+import { HttpRequest } from "@presentation/protocols/http.protocol";
+import { SignInService } from "@presentation/services/sign-in/sign-in.service";
 import { Request, Response } from "express";
-import { HttpRequest } from "../../../presentation/protocols/http.protocol";
-import { Controller } from "../../protocols/controller.protocol";
-import { SignInService } from "../../../presentation/services/sign-in/sign-in.service";
 
 export class SignInController implements Controller {
   constructor(private readonly signInService: SignInService) {}

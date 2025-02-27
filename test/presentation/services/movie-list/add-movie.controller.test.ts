@@ -1,15 +1,15 @@
-import { MovieModel } from "../../../../src/domain/models/movie.model";
-import { AddMovieUsecase } from "../../../../src/domain/usecases/add-movie.usecase";
-import { FindMovieByIdUsecase } from "../../../../src/domain/usecases/find-movie-by-id.usecase";
-import { MissingParamError } from "../../../../src/presentation/errors/missing-param-error";
+import { MovieModel } from "@domain/models/movie.model";
+import { AddMovieUsecase } from "@domain/usecases/add-movie.usecase";
+import { FindMovieByIdUsecase } from "@domain/usecases/find-movie-by-id.usecase";
+import { MissingParamError } from "@presentation/errors";
 import {
   badRequest,
   notFound,
   ok,
   serverError,
-} from "../../../../src/presentation/helpers/http-helper";
-import { HttpRequest } from "../../../../src/presentation/protocols/http.protocol";
-import { AddMovieService } from "../../../../src/presentation/services/movie-list/add-movie.service";
+} from "@presentation/helpers/http-helper";
+import { HttpRequest } from "@presentation/protocols/http.protocol";
+import { AddMovieService } from "@presentation/services/movie-list/add-movie.service";
 
 interface SutModel {
   findMovieById: FindMovieByIdUsecase;

@@ -1,4 +1,4 @@
-import { EmailValidator } from "../../../src/presentation/utils/email-validator";
+import { EmailValidator } from "@presentation/utils/email-validator";
 
 const makeSut = (): EmailValidator => new EmailValidator();
 

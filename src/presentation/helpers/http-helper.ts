@@ -1,6 +1,5 @@
-import { NotFoundError } from "../errors/not-found-error";
-import { ServerError } from "../errors/server-error";
-import { HttpResponse } from "../protocols/http.protocol";
+import { NotFoundError, ServerError } from "@presentation/errors";
+import { HttpResponse } from "@presentation/protocols/http.protocol";
 
 export const badRequest = (error: Error): HttpResponse => ({
   statusCode: 400,

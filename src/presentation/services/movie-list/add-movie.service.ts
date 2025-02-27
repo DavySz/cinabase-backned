@@ -1,14 +1,17 @@
-import { AddMovieUsecase } from "../../../domain/usecases/add-movie.usecase";
-import { FindMovieByIdUsecase } from "../../../domain/usecases/find-movie-by-id.usecase";
-import { MissingParamError } from "../../errors/missing-param-error";
+import { AddMovieUsecase } from "@domain/usecases/add-movie.usecase";
+import { FindMovieByIdUsecase } from "@domain/usecases/find-movie-by-id.usecase";
+import { MissingParamError } from "@presentation/errors";
 import {
   ok,
   notFound,
   badRequest,
   serverError,
-} from "../../helpers/http-helper";
-import { HttpRequest, HttpResponse } from "../../protocols/http.protocol";
-import { Service } from "../../protocols/service.protocol";
+} from "@presentation/helpers/http-helper";
+import {
+  HttpRequest,
+  HttpResponse,
+} from "@presentation/protocols/http.protocol";
+import { Service } from "@presentation/protocols/service.protocol";
 
 export class AddMovieService implements Service {
   constructor(

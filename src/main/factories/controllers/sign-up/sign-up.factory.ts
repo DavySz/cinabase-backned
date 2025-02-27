@@ -1,8 +1,8 @@
-import { BcryptAdapter } from "../../../../infra/criptography/bcrypt-adapter";
-import { AccountRepository } from "../../../../infra/database/mongodb/repositories/account/account.repository";
-import { SignUpService } from "../../../../presentation/services/sign-up/sign-up.service";
-import { EmailValidator } from "../../../../presentation/utils/email-validator";
-import { SignUpController } from "../../../controllers/sign-up/sign-up.controller";
+import { BcryptAdapter } from "@infra/criptography/bcrypt-adapter";
+import { AccountRepository } from "@infra/database/mongodb/repositories/account/account.repository";
+import { SignUpController } from "@main/controllers/sign-up/sign-up.controller";
+import { SignUpService } from "@presentation/services/sign-up/sign-up.service";
+import { EmailValidator } from "@presentation/utils/email-validator";
 
 export const makeSignUpControllerFactory = (): SignUpController => {
   const encrypter = new BcryptAdapter();

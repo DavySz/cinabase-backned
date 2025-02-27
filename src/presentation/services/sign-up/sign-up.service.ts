@@ -1,12 +1,18 @@
-import { AddAccountRepository } from "../../../domain/protocols/add-account.protocol";
-import { Encrypter } from "../../../domain/protocols/encrypter.protocol";
-import { AddAccountModel } from "../../../domain/usecases/add-account.usecase";
-import { InvalidParamError } from "../../errors/invalid-param-error";
-import { MissingParamError } from "../../errors/missing-param-error";
-import { badRequest, created, serverError } from "../../helpers/http-helper";
-import { HttpRequest, HttpResponse } from "../../protocols/http.protocol";
-import { Service } from "../../protocols/service.protocol";
-import { EmailValidator } from "../../utils/email-validator";
+import { AddAccountRepository } from "@domain/protocols/add-account.protocol";
+import { Encrypter } from "@domain/protocols/encrypter.protocol";
+import { AddAccountModel } from "@domain/usecases/add-account.usecase";
+import { InvalidParamError, MissingParamError } from "@presentation/errors";
+import {
+  created,
+  badRequest,
+  serverError,
+} from "@presentation/helpers/http-helper";
+import {
+  HttpRequest,
+  HttpResponse,
+} from "@presentation/protocols/http.protocol";
+import { Service } from "@presentation/protocols/service.protocol";
+import { EmailValidator } from "@presentation/utils/email-validator";
 
 export class SignUpService implements Service {
   constructor(

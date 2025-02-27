@@ -1,11 +1,13 @@
-import { AccountModel } from "../../../domain/models/account.model";
-import { Encrypter } from "../../../domain/protocols/encrypter.protocol";
-import { FindByEmail } from "../../../domain/usecases/find-by-email.usecase";
-import { InvalidParamError } from "../../errors/invalid-param-error";
-import { MissingParamError } from "../../errors/missing-param-error";
-import { badRequest, ok, serverError } from "../../helpers/http-helper";
-import { HttpRequest, HttpResponse } from "../../protocols/http.protocol";
-import { Service } from "../../protocols/service.protocol";
+import { AccountModel } from "@domain/models/account.model";
+import { Encrypter } from "@domain/protocols/encrypter.protocol";
+import { FindByEmail } from "@domain/usecases/find-by-email.usecase";
+import { InvalidParamError, MissingParamError } from "@presentation/errors";
+import { badRequest, ok, serverError } from "@presentation/helpers/http-helper";
+import {
+  HttpRequest,
+  HttpResponse,
+} from "@presentation/protocols/http.protocol";
+import { Service } from "@presentation/protocols/service.protocol";
 
 export class SignInService implements Service {
   constructor(
