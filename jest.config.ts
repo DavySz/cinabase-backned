@@ -11,6 +11,7 @@ const config: Config = {
     "!src/main/**",
     "!src/domain/**",
     "!src/**/protocols/**",
+    "!src/**/schemas/**",
   ],
 };
 
