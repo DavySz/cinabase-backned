@@ -1,16 +1,12 @@
 import { AddAccountDTO } from "@domain/dtos/add-account.dto";
 import { AccountModel } from "@domain/models/account.model";
-import { AddAccountRepository } from "@domain/protocols/add-account.protocol";
+import { AddAccount } from "@domain/protocols/add-account.protocol";
 import { User } from "@infra/database/mongodb/schemas/user.schema";
+import { toModel } from "../../helpers/map/model";
 
-export class AccountRepository implements AddAccountRepository {
+export class AddAccountRepository implements AddAccount {
   async add(data: AddAccountDTO): Promise<AccountModel> {
     const user = await User.create(data);
-    return {
-      id: user._id.toHexString(),
-      password: user.password,
-      email: user.email,
-      name: user.name,
-    };
+    return toModel<AccountModel>(user.toObject());
   }
 }

@@ -1,5 +1,6 @@
-import { AddAccountRepository } from "@domain/protocols/add-account.protocol";
+import { AddAccount } from "@domain/protocols/add-account.protocol";
 import { Encrypter } from "@domain/protocols/encrypter.protocol";
+import { FindAccountByEmail } from "@domain/protocols/find-account-by-email.protocol";
 import { AddAccountModel } from "@domain/usecases/add-account.usecase";
 import { InvalidParamError, MissingParamError } from "@presentation/errors";
 import {
@@ -16,7 +17,8 @@ import { EmailValidator } from "@presentation/utils/email-validator";
 
 export class SignUpService implements Service {
   constructor(
-    private readonly addAccount: AddAccountRepository,
+    private readonly findAccountByEmail: FindAccountByEmail,
+    private readonly addAccount: AddAccount,
     private readonly emailValidator: EmailValidator,
     private readonly encrypter: Encrypter
   ) {}
@@ -36,6 +38,12 @@ export class SignUpService implements Service {
       const isValidEmail = this.emailValidator.isValid(email);
 
       if (!isValidEmail) {
+        return badRequest(new InvalidParamError("email"));
+      }
+
+      const accountAlreadyExists = await this.findAccountByEmail.find(email);
+
+      if (accountAlreadyExists.id) {
         return badRequest(new InvalidParamError("email"));
       }
 
