@@ -1,6 +1,7 @@
 import { AccountModel } from "@domain/models/account.model";
-import { AddAccountRepository } from "@domain/protocols/add-account.protocol";
+import { AddAccount } from "@domain/protocols/add-account.protocol";
 import { Encrypter } from "@domain/protocols/encrypter.protocol";
+import { FindAccountByEmail } from "@domain/protocols/find-account-by-email.protocol";
 import { AddAccountModel } from "@domain/usecases/add-account.usecase";
 import { InvalidParamError, MissingParamError } from "@presentation/errors";
 import { badRequest, serverError } from "@presentation/helpers/http-helper";
@@ -11,8 +12,9 @@ import { makeBcryptAdapter } from "@test/mocks/encrypter/encrypter";
 
 interface SutModel {
   emailValidator: EmailValidator;
+  findAccountByEmail: FindAccountByEmail;
   bcryptAdapter: Encrypter;
-  addAccount: AddAccountRepository;
+  addAccount: AddAccount;
   sut: SignUpService;
 }
 
@@ -33,23 +35,41 @@ const makeEmailValidator = (): EmailValidator => {
   return new EmailValidatorStub();
 };
 
-const makeAddAccount = (): AddAccountRepository => {
-  class AccountRepositoryStub implements AddAccountRepository {
+const makeAddAccount = (): AddAccount => {
+  class AddAccountRepositoryStub implements AddAccount {
     add(_: AddAccountModel): Promise<AccountModel> {
       return Promise.resolve(makeAccountModel());
     }
   }
 
-  return new AccountRepositoryStub();
+  return new AddAccountRepositoryStub();
+};
+
+const makeFindAccountByEmail = (): FindAccountByEmail => {
+  class FindAccountByEmailRepositoryStub implements FindAccountByEmail {
+    find(_: string): Promise<AccountModel> {
+      return Promise.resolve({} as AccountModel);
+    }
+  }
+
+  return new FindAccountByEmailRepositoryStub();
 };
 
 const makeSut = (): SutModel => {
   const addAccount = makeAddAccount();
+  const findAccountByEmail = makeFindAccountByEmail();
   const bcryptAdapter = makeBcryptAdapter();
   const emailValidator = makeEmailValidator();
-  const sut = new SignUpService(addAccount, emailValidator, bcryptAdapter);
+
+  const sut = new SignUpService(
+    findAccountByEmail,
+    addAccount,
+    emailValidator,
+    bcryptAdapter
+  );
 
   return {
+    findAccountByEmail,
     emailValidator,
     bcryptAdapter,
     addAccount,
@@ -57,7 +77,7 @@ const makeSut = (): SutModel => {
   };
 };
 
-describe("SignUpController", () => {
+describe("SignUpService", () => {
   test("should return 400 if no field is provided", async () => {
     const { sut } = makeSut();
     const emptyParams = null;
@@ -116,6 +136,34 @@ describe("SignUpController", () => {
       name: "any-name",
     };
     const response = await sut.execute({ body: paramsWithoutPassword });
+    expect(response).toEqual(badRequest(new InvalidParamError("email")));
+  });
+
+  test("should call findAccountByEmail.find with correct email", async () => {
+    const { sut, findAccountByEmail } = makeSut();
+    const findSpy = jest.spyOn(findAccountByEmail, "find");
+    const params = {
+      name: "any-name",
+      email: "any-email",
+      password: "any-password",
+    };
+    await sut.execute({ body: params });
+    expect(findSpy).toHaveBeenCalledWith("any-email");
+  });
+
+  test("should return 400 if an account already exists with the provided email", async () => {
+    const { sut, findAccountByEmail } = makeSut();
+    jest
+      .spyOn(findAccountByEmail, "find")
+      .mockReturnValueOnce(Promise.resolve(makeAccountModel()));
+
+    const params = {
+      name: "any-name",
+      email: "any-email",
+      password: "any-password",
+    };
+
+    const response = await sut.execute({ body: params });
     expect(response).toEqual(badRequest(new InvalidParamError("email")));
   });
 
