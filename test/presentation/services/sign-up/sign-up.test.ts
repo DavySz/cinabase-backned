@@ -1,8 +1,8 @@
+import { AddAccountDTO } from "@domain/dtos/add-account.dto";
 import { AccountModel } from "@domain/models/account.model";
 import { AddAccount } from "@domain/protocols/add-account.protocol";
 import { Encrypter } from "@domain/protocols/encrypter.protocol";
 import { FindAccountByEmail } from "@domain/protocols/find-account-by-email.protocol";
-import { AddAccountModel } from "@domain/usecases/add-account.usecase";
 import { InvalidParamError, MissingParamError } from "@presentation/errors";
 import { badRequest, serverError } from "@presentation/helpers/http-helper";
 import { Validator } from "@presentation/protocols/validator.protocol";
@@ -23,6 +23,8 @@ const makeAccountModel = (): AccountModel => ({
   name: "any-name",
   email: "any@mail.com",
   password: "any-password",
+  createdAt: "any-date",
+  updatedAt: "any-date",
 });
 
 const makeEmailValidator = (): EmailValidator => {
@@ -37,7 +39,7 @@ const makeEmailValidator = (): EmailValidator => {
 
 const makeAddAccount = (): AddAccount => {
   class AddAccountRepositoryStub implements AddAccount {
-    add(_: AddAccountModel): Promise<AccountModel> {
+    add(_: AddAccountDTO): Promise<AccountModel> {
       return Promise.resolve(makeAccountModel());
     }
   }

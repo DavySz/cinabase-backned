@@ -16,6 +16,8 @@ class FindByEmailStub implements FindByEmail {
   async execute(_: string): Promise<AccountModel> {
     return Promise.resolve({
       password: "any-password",
+      createdAt: "any-date",
+      updatedAt: "any-date",
       email: "any-email",
       name: "any-name",
       id: "any-id",

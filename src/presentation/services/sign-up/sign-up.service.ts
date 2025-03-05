@@ -1,7 +1,7 @@
+import { AddAccountDTO } from "@domain/dtos/add-account.dto";
 import { AddAccount } from "@domain/protocols/add-account.protocol";
 import { Encrypter } from "@domain/protocols/encrypter.protocol";
 import { FindAccountByEmail } from "@domain/protocols/find-account-by-email.protocol";
-import { AddAccountModel } from "@domain/usecases/add-account.usecase";
 import { InvalidParamError, MissingParamError } from "@presentation/errors";
 import {
   created,
@@ -49,7 +49,7 @@ export class SignUpService implements Service {
 
       const hashedPassword = await this.encrypter.encrypt(password);
 
-      const account: AddAccountModel = {
+      const account: AddAccountDTO = {
         password: hashedPassword,
         email,
         name,
