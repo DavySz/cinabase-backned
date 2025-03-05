@@ -3,7 +3,7 @@ import { FindAccountByEmailRepository } from "@infra/database/mongodb/repositori
 import { SignInController } from "@main/controllers/sign-in/sign-in.controller";
 import { SignInService } from "@presentation/services/sign-in/sign-in.service";
 
-export const makeSignInController = (): SignInController => {
+export const makeSignInControllerFactory = (): SignInController => {
   const encrypter = new BcryptAdapter();
   const findAccountByEmail = new FindAccountByEmailRepository();
   const service = new SignInService(findAccountByEmail, encrypter);

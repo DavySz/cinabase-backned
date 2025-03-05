@@ -34,8 +34,8 @@ export class SignInService implements Service {
       }
 
       const isValidPassword = await this.encrypter.compare(
-        account.password,
-        password
+        password,
+        account.password
       );
 
       if (!isValidPassword) {
