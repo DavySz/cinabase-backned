@@ -1,6 +1,6 @@
 import { AccountModel } from "@domain/models/account.model";
 import { Encrypter } from "@domain/protocols/encrypter.protocol";
-import { FindByEmail } from "@domain/usecases/find-by-email.usecase";
+import { FindAccountByEmail } from "@domain/protocols/find-account-by-email.protocol";
 import { InvalidParamError, MissingParamError } from "@presentation/errors";
 import { badRequest, ok, serverError } from "@presentation/helpers/http-helper";
 import { SignInService } from "@presentation/services/sign-in/sign-in.service";
@@ -8,12 +8,12 @@ import { makeBcryptAdapter } from "@test/mocks/encrypter/encrypter";
 
 interface SutModel {
   bcryptAdapter: Encrypter;
-  findByEmail: FindByEmail;
+  findByEmail: FindAccountByEmail;
   sut: SignInService;
 }
 
-class FindByEmailStub implements FindByEmail {
-  async execute(_: string): Promise<AccountModel> {
+class FindByEmailStub implements FindAccountByEmail {
+  async find(_: string): Promise<AccountModel> {
     return Promise.resolve({
       password: "any-password",
       createdAt: "any-date",
@@ -68,9 +68,7 @@ describe("SignInController", () => {
   it("should return 400 if account not exists", async () => {
     const { sut, findByEmail } = makeSut();
 
-    jest
-      .spyOn(findByEmail, "execute")
-      .mockResolvedValueOnce({} as AccountModel);
+    jest.spyOn(findByEmail, "find").mockResolvedValueOnce({} as AccountModel);
 
     const body = {
       email: "any-email",
@@ -102,7 +100,7 @@ describe("SignInController", () => {
 
   it("should throws 500 if findByEmail throws", async () => {
     const { sut, findByEmail } = makeSut();
-    jest.spyOn(findByEmail, "execute").mockRejectedValueOnce(new Error());
+    jest.spyOn(findByEmail, "find").mockRejectedValueOnce(new Error());
 
     const body = {
       email: "any-email",

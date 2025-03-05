@@ -1,6 +1,5 @@
 import { AccountModel } from "@domain/models/account.model";
 import { Encrypter } from "@domain/protocols/encrypter.protocol";
-import { FindByEmail } from "@domain/usecases/find-by-email.usecase";
 import { InvalidParamError, MissingParamError } from "@presentation/errors";
 import { badRequest, ok, serverError } from "@presentation/helpers/http-helper";
 import {
@@ -8,10 +7,11 @@ import {
   HttpResponse,
 } from "@presentation/protocols/http.protocol";
 import { Service } from "@presentation/protocols/service.protocol";
+import { FindAccountByEmail } from "@domain/protocols/find-account-by-email.protocol";
 
 export class SignInService implements Service {
   constructor(
-    private readonly findByEmail: FindByEmail,
+    private readonly findByEmail: FindAccountByEmail,
     private readonly encrypter: Encrypter
   ) {}
 
@@ -27,7 +27,7 @@ export class SignInService implements Service {
 
       const { email, password } = httpRequest.body;
 
-      const account = await this.findByEmail.execute(email);
+      const account = await this.findByEmail.find(email);
 
       if (!account.id) {
         return badRequest(new InvalidParamError("email or password"));
