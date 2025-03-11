@@ -1,4 +1,4 @@
-import { BcryptAdapter } from "@infra/criptography/bcrypt-adapter";
+import { EncrypterAdapter } from "@infra/criptography/encrypter-adapter";
 import {
   AddAccountRepository,
   FindAccountByEmailRepository,
@@ -8,7 +8,7 @@ import { SignUpService } from "@presentation/services/sign-up/sign-up.service";
 import { EmailValidator } from "@presentation/utils/email-validator";
 
 export const makeSignUpControllerFactory = (): SignUpController => {
-  const encrypter = new BcryptAdapter();
+  const encrypter = new EncrypterAdapter();
   const addAccount = new AddAccountRepository();
   const findAccountByEmail = new FindAccountByEmailRepository();
   const emailValidator = new EmailValidator();
